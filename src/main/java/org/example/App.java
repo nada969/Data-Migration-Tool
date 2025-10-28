@@ -44,18 +44,22 @@ public class App
                     for(String key:doc.keySet()) {
                         Object value = doc.get(key);
 
+//       Save data from MongoDB into lists
                         columns.add(key);
                         values.add(value != null ? value.toString():null);
 
                         System.out.println(key + " & the value: " + value);
                     }
 
+//       convert cols to string like:[_id,name,..] to ("_id,name,.."), to be valid for SQL statement
                     String colStr = String.join(", ",columns);
+//       convert vals space to (?,?,..), to be valid for SQL statement
                     String valStr = String.join(", ", Collections.nCopies(columns.size(), "?"));
                     sql = "INSERT INTO "+c  +"(" + colStr + ") values ("+ valStr +")";
 
 
                     try (PreparedStatement psmt = psql.conn.prepareStatement(sql)){
+//       insert values into SQL statement
                         for (int i = 0; i < values.size(); i++) {
                             String value = values.get(i);
                             Object originalValue = doc.get(columns.get(i));
@@ -91,10 +95,10 @@ public class App
 //                    System.out.println(key + " & the value: "+ value);
 //                    hashMap.put(key,value);
 //                }
-                System.out.println("--------------------------");
+
 
             }
-
+            System.out.println("--------------------------");
         }
 
 //        System.out.println(hashMap);
