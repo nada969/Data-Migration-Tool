@@ -1,0 +1,11 @@
+{
+  "source": "mongoDB",
+  "destination": "postgres",
+  "collectionName": "  .. ",
+  "tableName": " ..  ",
+  "cronSchedule": "0 3 * * *",
+  "mappings": [
+    {},
+    {}
+  ]
+}
