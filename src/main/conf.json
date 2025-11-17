@@ -1,11 +1,36 @@
 {
   "source": "mongoDB",
+  "urlSource":"mongodb://localhost:27017",
   "destination": "postgres",
+  "urlDestination":"jdbc:postgresql://localhost:5432/postgres",
+  "destinationPassWord":"493075273",
   "collectionName": "  .. ",
   "tableName": " ..  ",
   "cronSchedule": "0 3 * * *",
   "mappings": [
-    {},
-    {}
+    {
+      "mongoDoc":"  ",
+      "psqlCol":" col1 ",
+      "type":" ",
+      "sourceValue":"ff"
+    },
+    {
+      "mongoDoc":"  ",
+      "psqlCol":"col2 ",
+      "type":" ",
+      "sourceValue":"ss"
+    },
+    {
+      "mongoDoc":"  ",
+      "psqlCol":"col3 ",
+      "type":" ",
+      "sourceValue":"mm"
+    },
+    {
+      "mongoDoc":"  ",
+      "psqlCol":" col4",
+      "type":" ",
+      "sourceValue":"pp"
+    }
   ]
 }

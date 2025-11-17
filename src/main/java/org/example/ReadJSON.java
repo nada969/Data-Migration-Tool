@@ -1,13 +1,36 @@
 package org.example;
 
+//if JSON has somthing not found in java file: ignore it and dont throww error
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+@JsonIgnoreProperties(ignoreUnknown = true)
+
 public class ReadJSON {
+    static class Mapping {
+        String mongoDoc;
+        String psqlCol;
+        String type;
+        Object sourceValue;
+
+        public String getMongoDoc(){return mongoDoc;}
+        public String getPsqlCol(){return psqlCol;}
+        public String getType(){return type;}
+        public Object getSourceValue(){return sourceValue;}
+
+        public void setMongoDoc(String mongoDoc){this.mongoDoc = mongoDoc;}
+        public void setPsqlCol(String psqlCol){this.psqlCol = psqlCol;}
+        public void setType(String type){this.type = type;}
+        public void setSourceValue(Object sourceValue){this.sourceValue=sourceValue;}
+    };
     //        JSON Configuration
     String source;
     String destination;
     String collectionName;
     String tableName;
     String cronSchedule;
-    Object mappings;
+//array of objects
+    Mapping[] mappings ;
+
+
 
     public String  getSource(){
         return source;
@@ -43,10 +66,10 @@ public class ReadJSON {
         this.cronSchedule = cronSchedule;
     }
 
-    public Object getMappings() {
+    public Mapping[] getMappings() {
         return mappings;
     }
-    public void setMappings(Object mappings) {
+    public void setMappings(Mapping[] mappings) {
         this.mappings = mappings;
     }
 }

@@ -7,7 +7,9 @@ import org.bson.Document;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.util.*;
+import java.lang.instrument.Instrumentation;
 
 
 public class App2 {
@@ -30,36 +32,36 @@ public class App2 {
 //        mapping JSON file into --> ReadJSON class
         ReadJSON readJSON = mapper.readValue(file,ReadJSON.class);
 
+
 //        mongo db name(source)
         String source = readJSON.source;
+        System.out.println(source);
         MongoDatabase db = mongo.mongoClient.getDatabase(source);
 //        mongo collection name (collectionName)
         String collectionName = readJSON.collectionName;
         MongoCollection<Document> collection = db.getCollection(collectionName);
 
+//        loop into mappings ////////
+        HashMap<String, Object> docData = new HashMap<>();
 
-//        for(Document doc:collection.find()) {
-//            HashMap<String, Object> docData = new HashMap<>();
-//
-//            for (String key : doc.keySet()) {
-//                Object value = doc.get(key);
-//                docData.put(key,value);
-//
-//                System.out.println(key + " : " + value);
-//
-//            }
-//
-//
-//            String colStr = String.join(", ",docData.keySet());
-//
-//
-//            //       convert vals space to (?,?,..), to be valid for SQL statement
-//            String valStr = String.join(", ", Collections.nCopies(docData.keySet().size(), "?"));
-//
-////          Postgres tableName (tableName)
-//
-//            sql = "INSERT INTO "+" tableName " +"(" + colStr + ") values ("+ valStr +")";
-//
+        ReadJSON.Mapping[] mapp = readJSON.getMappings();
+        for (ReadJSON.Mapping item : mapp){
+            String key = item.psqlCol;
+            Object value = item.sourceValue;
+            docData.put(key,value);
+            System.out.println(key + " : " + value);
+        }
+
+            String colStr = String.join(", ",docData.keySet());
+
+
+            //       convert vals space to (?,?,..), to be valid for SQL statement
+            String valStr = String.join(", ", Collections.nCopies(docData.keySet().size(), "?"));
+
+//          Postgres tableName (tableName)
+
+            sql = "INSERT INTO "+readJSON.tableName +"(" + colStr + ") values ("+ valStr +")";
+
 //            try (PreparedStatement psmt = psql.conn.prepareStatement(sql)){
 //                int i = 0;
 //                for (String key:docData.keySet()) {
