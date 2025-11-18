@@ -19,7 +19,10 @@ public class App
 
         // Connect to PostgreSQL
         PostgreSQL psql = new PostgreSQL();
-        psql.connect();
+        String url = "jdbc:postgresql://localhost:5432/postgres";
+        String user = "postgres";                                    // PostgreSQL username
+        String password = "493075273";                               // PostgreSQL password
+        psql.connect(url,user,password);
 
 /// //////////////////////////////////////////////////
         MongoDatabase db =  mongo.mongoClient.getDatabase("mongoDB");

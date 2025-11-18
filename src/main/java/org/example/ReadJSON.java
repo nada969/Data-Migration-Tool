@@ -6,24 +6,23 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 public class ReadJSON {
     static class Mapping {
-        String mongoDoc;
+        String mongoKey;
         String psqlCol;
         String type;
-        Object sourceValue;
 
-        public String getMongoDoc(){return mongoDoc;}
+        public String getMongoKey(){return mongoKey;}
         public String getPsqlCol(){return psqlCol;}
         public String getType(){return type;}
-        public Object getSourceValue(){return sourceValue;}
 
-        public void setMongoDoc(String mongoDoc){this.mongoDoc = mongoDoc;}
+        public void setMongoKey(String mongoKey){this.mongoKey = mongoKey;}
         public void setPsqlCol(String psqlCol){this.psqlCol = psqlCol;}
         public void setType(String type){this.type = type;}
-        public void setSourceValue(Object sourceValue){this.sourceValue=sourceValue;}
     };
     //        JSON Configuration
     String source;
     String destination;
+    String urlDestination;
+    String destinationPassWord;
     String collectionName;
     String tableName;
     String cronSchedule;
@@ -44,7 +43,18 @@ public class ReadJSON {
     public void setDestination(String destination){
         this.destination = destination;
     }
-
+    public String getUrlDestination(){
+        return urlDestination;
+    }
+    public void setUrlDestination(String urlDestination){
+        this.urlDestination = urlDestination;
+    }
+    public String getDestinationPassWord(){
+        return destinationPassWord;
+    }
+    public void setDestinationPassWord(String destinationPassWord){
+        this.destinationPassWord = destinationPassWord;
+    }
     public String  getCollectionName(){
         return collectionName;
     }

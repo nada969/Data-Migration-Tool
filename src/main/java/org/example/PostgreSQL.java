@@ -7,11 +7,11 @@ import java.sql.SQLException;
 
 public class PostgreSQL {
     public Connection conn;
-    public void connect() {
+    public void connect(String url,String user,String password) {
 //        Postgresql DB name (destination)
-        String url = "jdbc:postgresql://localhost:5432/postgres";
-        String user = "postgres";                                    // PostgreSQL username
-        String password = "493075273";                               // PostgreSQL password
+//        String url = "jdbc:postgresql://localhost:5432/postgres";
+//        String user = "postgres";                                    // PostgreSQL username
+//        String password = "493075273";                               // PostgreSQL password
         try {
             conn = DriverManager.getConnection(url, user, password);
             System.out.println("Connected to PostgreSQL successfully!");

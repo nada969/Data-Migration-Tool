@@ -4,33 +4,29 @@
   "destination": "postgres",
   "urlDestination":"jdbc:postgresql://localhost:5432/postgres",
   "destinationPassWord":"493075273",
-  "collectionName": "  .. ",
-  "tableName": " ..  ",
+  "collectionName": "new coll",
+  "tableName": "new_coll",
   "cronSchedule": "0 3 * * *",
   "mappings": [
     {
-      "mongoDoc":"  ",
-      "psqlCol":" col1 ",
-      "type":" ",
-      "sourceValue":"ff"
+      "mongoKey":"_id",
+      "psqlCol":"_id",
+      "type":"String"
     },
     {
-      "mongoDoc":"  ",
-      "psqlCol":"col2 ",
-      "type":" ",
-      "sourceValue":"ss"
+      "mongoKey":"name",
+      "psqlCol":" name ",
+      "type":"String"
     },
     {
-      "mongoDoc":"  ",
-      "psqlCol":"col3 ",
-      "type":" ",
-      "sourceValue":"mm"
+      "mongoKey":"price",
+      "psqlCol":"price",
+      "type":"Double"
     },
     {
-      "mongoDoc":"  ",
-      "psqlCol":" col4",
-      "type":" ",
-      "sourceValue":"pp"
+      "mongoKey":"inventory",
+      "psqlCol":"inventory",
+      "type":"Integer"
     }
   ]
 }
