@@ -143,3 +143,16 @@ Spring / Spring Boot integration is planned as an optional future enhancement to
 - [ ] REST API for remote migration triggering
 - [ ] GraphQL support
 - [ ] Real-time streaming migration
+
+## Spring / Spring Boot (Future Enhancement – Optional)
+Spring is not required to complete the project, but may be introduced later to improve modularity, scalability, and configuration management.
+Planned Spring-based enhancements:
+
+- [ ] Spring Boot application structure
+- [ ] Dependency Injection for database services
+- [ ] Externalized configuration using application.yml
+- [ ] Profile-based environments
+- [ ] Spring Scheduler / Quartz for cron jobs
+- [ ] Spring Data MongoDB / JPA integration (optional)
+- [ ] REST API for triggering and monitoring migrations
+- [ ] Health checks and monitoring endpoints
