@@ -3,8 +3,9 @@
 ## Project Overview
 A Java-based tool to migrate data from MongoDB (NoSQL) to PostgreSQL (SQL database) with automatic type conversion and configurable mappings.
 
-The project is currently implemented using core Java + libraries (MongoDB driver, JDBC, Jackson) and is designed to be extensible.
+The project is currently implemented using core Java + libraries (MongoDB driver, JDBC, Jackson) and is designed to be extensible. 
 Spring / Spring Boot integration is planned as an optional future enhancement to improve scalability, configuration management, and maintainability.
+
 ---
 
 ## Completed Features
