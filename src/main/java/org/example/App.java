@@ -53,26 +53,11 @@ public class App
                 String valStr = String.join(", ", Collections.nCopies(docData.keySet().size(), "?"));
                 sql = "INSERT INTO "+c  +"(" + colStr + ") values ("+ valStr +")";
                 PreparedStatement psmt = psql.conn.prepareStatement(sql);
-                Context context=new Context();
-                int i = 0;
-                for (String key:docData.keySet()) {
-                    Object originalValue = docData.get(key);
 
-                    if (originalValue == null) {
-                        psmt.setNull(i + 1, java.sql.Types.NULL );
-                    } else if (originalValue instanceof Integer) {
-                        psmt.setInt(i + 1, (Integer) originalValue);
-                    } else if (originalValue instanceof Long) {
-                        psmt.setLong(i + 1, (Long) originalValue);
-                    } else if (originalValue instanceof Double) {
-                        psmt.setDouble(i + 1, (Double) originalValue);
-                    } else if (originalValue instanceof Boolean) {
-                        psmt.setBoolean(i + 1, (Boolean) originalValue);
-                    } else if (originalValue instanceof Date) {
-                        psmt.setTimestamp(i + 1, new java.sql.Timestamp(((Date) originalValue).getTime()));
-                    } else {
-                        psmt.setString(i + 1, originalValue.toString());
-                    }
+                int i = 1;
+                for (String key:docData.keySet()) {
+                    Object originalValue = (docData.get(key)).toString();
+                    TypeHandler.setValue(psmt,i,originalValue,key);
                     i +=1;
                 }
 

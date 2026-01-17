@@ -8,7 +8,7 @@
   "tableName": "new_coll",
   "cronSchedule": "0 3 * * *",
   "mappings": [
-    {
+    {  
       "mongoKey":"_id",
       "psqlCol":"_id",
       "type":"String"

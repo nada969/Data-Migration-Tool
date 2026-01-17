@@ -30,4 +30,6 @@ public class ReadJSON {
     private String tableName;
     private String cronSchedule;
     private Mapping[] mappings;
+
+
 }
