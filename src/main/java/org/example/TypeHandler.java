@@ -7,16 +7,15 @@ import java.sql.Timestamp;
 
 public class TypeHandler {
     public static void setValue(PreparedStatement pstmt, int index, Object value, String typeName) throws SQLException {
-        if (value == null) {
-            pstmt.setNull(index, getSqlType(typeName));
-            return;
-        }
+//        if (value == null) {
+//            pstmt.setNull(index, toSqlType(typeName));
+//            return;
+//        }
 
 
         switch (typeName) {
             case "String":
                 pstmt.setString(index, value.toString());
-
                 break;
             case "Integer":
             case "int":
@@ -61,34 +60,7 @@ public class TypeHandler {
         }
     }
 
-    private static int getSqlType(String typeName) {
-        switch (typeName) {
-            case "String": return java.sql.Types.VARCHAR;
-            case "Integer": case "int": return java.sql.Types.INTEGER;
-            case "Long": case "long": return java.sql.Types.BIGINT;
-            case "Double": case "double": return java.sql.Types.DOUBLE;
-            case "Float": case "float": return java.sql.Types.FLOAT;
-            case "Boolean": case "boolean": return java.sql.Types.BOOLEAN;
-            case "Date": case "Timestamp": return java.sql.Types.TIMESTAMP;
-            case "BigDecimal": return java.sql.Types.DECIMAL;
-            case "byte[]": case "Binary": return java.sql.Types.BINARY;
-            default: return java.sql.Types.OTHER;
-        }
-//        switch (typeName) {
-//        } else if (originalValue instanceof Integer) {
-//            psmt.setInt(i + 1, (Integer) originalValue);
-//        } else if (originalValue instanceof Long) {
-//            psmt.setLong(i + 1, (Long) originalValue);
-//        } else if (originalValue instanceof Double) {
-//            psmt.setDouble(i + 1, (Double) originalValue);
-//        } else if (originalValue instanceof Boolean) {
-//            psmt.setBoolean(i + 1, (Boolean) originalValue);
-//        } else if (originalValue instanceof Date) {
-//            psmt.setTimestamp(i + 1, new java.sql.Timestamp(((Date) originalValue).getTime()));
-//        } else {
-//            psmt.setString(i + 1, originalValue.toString());
-//        }
-    }
+
 
 
 }

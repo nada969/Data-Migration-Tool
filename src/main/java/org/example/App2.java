@@ -10,13 +10,14 @@ import org.example.db.PostgreSQL;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.*;
 
 
 public class App2 {
     public static void main( String[] args ) throws IOException, SQLException {
+//        1- Configure JSON File
 //        define Jackson mapper
         ObjectMapper mapper = new ObjectMapper();
 //        insert JSON file path
@@ -24,11 +25,18 @@ public class App2 {
 //        mapping JSON file into --> ReadJSON class
         ReadJSON readJSON = mapper.readValue(file,ReadJSON.class);
 
-        // Connect to MongoDB
+//      2- connect to Data Base
+//      Connect to MongoDB
         MongoDB mongo = new MongoDB();
         mongo.connect();
+//      mongo db name(source)
+        String source = readJSON.getSource();
+        MongoDatabase db = mongo.mongoClient.getDatabase(source);
+//      mongo collection name (collectionName)
+        String collectionName = readJSON.getCollectionName();
+        MongoCollection<Document> collection = db.getCollection(collectionName);
 
-        // Connect to PostgreSQL
+//      Connect to PostgreSQL
         PostgreSQL psql = new PostgreSQL();
         String url = readJSON.getUrlDestination() ;
         String user = readJSON.getDestination();
@@ -39,24 +47,59 @@ public class App2 {
         String sql2;
         String sql3;
 
+        String table_name = readJSON.getTableName();
 
-//        mongo db name(source)
-        String source = readJSON.getSource();
-        MongoDatabase db = mongo.mongoClient.getDatabase(source);
+//       3- Tables
+//      check if the table exist in PostgreSQL ("tableName"):
+        sql1 = "CREATE TABLE IF NOT EXISTS " + table_name +
+                " (id SERIAL PRIMARY KEY)";
+        Statement stmt1 = psql.conn.createStatement();
+        stmt1.executeUpdate(sql1);
 
-//        mongo collection name (collectionName)
-        String collectionName = readJSON.getCollectionName();
-        MongoCollection<Document> collection = db.getCollection(collectionName);
+//      4- Columns
+//      check if each column exists in that table
+//      loop over Mapping to create the columns if not exist
+        for(ReadJSON.Mapping map: readJSON.getMappings()){
+            sql2 = "Alter Table " + table_name + " " +
+                    " Add column If not exists " + map.psqlCol() + " " + map.type() ;
 
-//      check if the table exist in PostgreSQL ( "tableName"):
-        sql1 = "SELECT EXISTS (" +
-                "  SELECT 1 FROM information_schema.tables " +
-                "  WHERE table_schema = 'public' " +
-                "  AND table_name = ' " +readJSON.getTableName()+ "'" +
-                ")";
+            try (Statement stmt = psql.conn.createStatement()) {
+                stmt.executeUpdate(sql2);
+            }
+        }
 
-//        loop to create all the columns
-//        Object mappings = readJSON.getMappings();
+//      5- Values
+//      first: loop all over the docs in the collection
+//      sec: loop to insert all values of this doc, in the columns that defined above
+//        Collection
+//             ├── Document #1
+//             │     ├── mapping loop
+//             │     └── INSERT row
+//             ├── Document #2
+//             │     ├── mapping loop
+//             │     └── INSERT row
+        for (Document document : collection.find()) {
+            for (ReadJSON.Mapping map : readJSON.getMappings()) {
+                //          Array value: --> table with one col & n.th rows
+                if (map.type().equals("array")) {
+                    continue;
+                }
+                //          Object value: --> table with one row & n.th cols
+                else if (map.type().equals("Object")) {
+                    continue;
+                }
+                //          Single value: --> value
+                else {
+                    Object value = document.get(map.mongoKey());
+                    sql3 = "Insert Into " + table_name + " (" + map.psqlCol() + ") Values (" + value + ")";
+                    try (Statement stmt = psql.conn.createStatement()) {
+                        stmt.executeUpdate(sql3);
+                    }
+                }
+            }
+        }
+        }
+
 //        int paramIndex = 1;
 //        for (Object mapping : mappings) {
 //            Object value = document.get(mapping.getMongoKey());
@@ -64,67 +107,42 @@ public class App2 {
 //            paramIndex++;
 //        }
 
-        sql2 = "CREATE TABLE " + readJSON.getTableName() + " (id SERIAL PRIMARY KEY)";
-
-
-        try(PreparedStatement psmt1 = psql.conn.prepareStatement(sql1)){
-            psmt1.executeQuery();
-        }
-        catch (Exception e){
-            PreparedStatement psmt2 = psql.conn.prepareStatement(sql2);
-            psmt2.executeQuery();
-        }
-
-
 //        loop for each doc in the collection:  Extract data from MongoCollection & put them in HashTable
-        for(Document doc:collection.find()){
-
-            HashMap<String,Object> docData = new HashMap<>();
-            for(String key:doc.keySet()) {
-                Object value = doc.get(key);
-
-//          Save data from MongoDB into lists
-                docData.put(key,value);
-                System.out.println(key + " & the value: " + value);
-            }
-
-            String colStr = String.join(", ",docData.keySet());
-            String valStr = String.join(", ", Collections.nCopies(docData.keySet().size(), "?"));
-
-//          convert vals space to (?,?,..), to be valid for SQL statement
-            sql3 = "INSERT INTO "+readJSON.getTableName()  +"(" + colStr + ") values ("+ valStr +")";
-            PreparedStatement psmt3 = psql.conn.prepareStatement(sql3);
-            Context context=new Context();
-            int i = 0;
-            for (String key:docData.keySet()) {
-                Object originalValue = docData.get(key);
-
-                if (originalValue == null) {
-                    psmt3.setNull(i + 1, java.sql.Types.NULL );
-                } else if (originalValue instanceof Integer) {
-                    psmt3.setInt(i + 1, (Integer) originalValue);
-                } else if (originalValue instanceof Long) {
-                    psmt3.setLong(i + 1, (Long) originalValue);
-                } else if (originalValue instanceof Double) {
-                    psmt3.setDouble(i + 1, (Double) originalValue);
-                } else if (originalValue instanceof Boolean) {
-                    psmt3.setBoolean(i + 1, (Boolean) originalValue);
-                } else if (originalValue instanceof Date) {
-                    psmt3.setTimestamp(i + 1, new java.sql.Timestamp(((Date) originalValue).getTime()));
-                } else {
-                    psmt3.setString(i + 1, originalValue.toString());
-                }
-                i +=1;
-            }
-
-//              Error Handling
-            try {
-                psmt3.executeUpdate();
-                System.out.println("Inserted Done");
-            }
-            catch (Exception e){
-                System.out.println("Inserted Failed"+e.getMessage());
-            }
-        }
-    }
+//        for(Document doc:collection.find()){
+//
+//            HashMap<String,Object> docData = new HashMap<>();
+//            for(String key:doc.keySet()) {
+//                Object value = doc.get(key);
+//
+////          Save data from MongoDB into lists
+//                docData.put(key,value);
+//                System.out.println(key + " & the value: " + value);
+//            }
+//
+//            String colStr = String.join(", ",docData.keySet());
+//            String valStr = String.join(", ", Collections.nCopies(docData.keySet().size(), "?"));
+//
+////          convert vals space to (?,?,..), to be valid for SQL statement
+//            sql2 = "INSERT INTO "+readJSON.getTableName()  +"(" + colStr + ") values ("+ valStr +")";
+//            PreparedStatement stmt2 = psql.conn.prepareStatement(sql2);
+//
+//            int i = 0;
+//            for (String key:docData.keySet()) {
+//                Object originalValue = docData.get(key);
+//                System.out.println("value: "+originalValue.toString()+". the type:"+originalValue.getClass().getSimpleName());
+//                TypeHandler.setValue(stmt2,i+1,originalValue.getClass().getSimpleName(),key);
+//
+//                try {
+//                    stmt2.executeUpdate();
+//                    System.out.println("Inserted Done");
+//                }
+//                catch (Exception e){
+//                    System.out.println("Inserted Failed"+e.getMessage());
+//                }
+//
+//                i +=1;
+//            }
+//            System.out.println("--------------------------------------");
+//        }
+//    }
 }
