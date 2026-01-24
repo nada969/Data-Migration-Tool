@@ -8,7 +8,11 @@
   "tableName": "products",
   "cronSchedule": "0 3 * * *",
   "mappings": [
-
+    {
+      "mongoKey":"_id",
+      "psqlCol":"_id",
+      "type":"VARCHAR"
+    },
     {
       "mongoKey":"name",
       "psqlCol":" name ",

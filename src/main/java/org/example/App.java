@@ -22,6 +22,8 @@ public class App
         String url = "jdbc:postgresql://localhost:5432/postgres";
         String user = "postgres";                                    // PostgreSQL username
         String password = "493075273";                               // PostgreSQL password
+
+//        JDBC (Traditional/Raw SQL) to query values in DB
         psql.connect(url,user,password);
 
 /// //////////////////////////////////////////////////

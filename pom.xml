@@ -21,25 +21,28 @@
             <version>3.8.1</version>
             <scope>test</scope>
         </dependency>
+
+        <!--        for Building SQL Queries in Java         -->
+        <!-- Source: https://mvnrepository.com/artifact/org.jooq/jooq -->
+        <dependency>
+            <groupId>org.jooq</groupId>
+            <artifactId>jooq</artifactId>
+            <version>3.19.7</version>
+            <scope>compile</scope>
+        </dependency>
+
+        <dependency>
+            <groupId>org.jooq</groupId>
+            <artifactId>jooq-bom</artifactId>
+            <version>3.19.28</version>
+        </dependency>
+
+
         <!--  MongoDB Java Driver (Sync API) -->
         <dependency>
             <groupId>org.mongodb</groupId>
             <artifactId>mongodb-driver-sync</artifactId>
             <version>5.5.1</version>
-        </dependency>
-
-        <!-- SLF4J API (for MongoDB logging) -->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>2.0.17</version>
-        </dependency>
-
-        <!-- SLF4J Simple Implementation -->
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>2.0.17</version>
         </dependency>
 
         <!-- BSON Library -->
@@ -69,6 +72,9 @@
             <scope>provided</scope>
         </dependency>
 
+
+
+
     </dependencies>
     <build>
         <plugins>
@@ -80,6 +86,9 @@
                     <target>25</target>
                 </configuration>
             </plugin>
+
+
+
         </plugins>
     </build>
 

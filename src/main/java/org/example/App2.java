@@ -8,12 +8,18 @@ import org.example.config.ReadJSON;
 import org.example.db.MongoDB;
 import org.example.db.PostgreSQL;
 
+import javax.net.ssl.SSLContext;
 import java.io.File;
 import java.io.IOException;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.*;
 
+import static org.jooq.SQLDialect.*;
+import org.jooq.*;
+import org.jooq.Record;
+import org.jooq.impl.*;
 
 public class App2 {
     public static void main( String[] args ) throws IOException, SQLException {
@@ -71,13 +77,19 @@ public class App2 {
 //      5- Values
 //      first: loop all over the docs in the collection
 //      sec: loop to insert all values of this doc, in the columns that defined above
+//        Using ( JOOQ )
 //        Collection
 //             ├── Document #1
 //             │     ├── mapping loop
-//             │     └── INSERT row
+//             │     └── INSERT row --> insert each value alone
 //             ├── Document #2
 //             │     ├── mapping loop
-//             │     └── INSERT row
+//             │     └── INSERT row  --> insert each value alone
+        DSLContext create = DSL.using(
+                readJSON.getUrlDestination(),
+                "postgres",
+                readJSON.getDestinationPassWord()
+        );
         for (Document document : collection.find()) {
             for (ReadJSON.Mapping map : readJSON.getMappings()) {
                 //          Array value: --> table with one col & n.th rows
@@ -91,11 +103,14 @@ public class App2 {
                 //          Single value: --> value
                 else {
                     Object value = document.get(map.mongoKey());
-                    sql3 = "Insert Into " + table_name + " (" + map.psqlCol() + ") Values (" + value + ")";
-                    try (Statement stmt = psql.conn.createStatement()) {
-                        stmt.executeUpdate(sql3);
-                    }
+                    create.insertInto(table_name.toString())
+                            .Set(map.psqlCol(),value)
+                            .execute();
                 }
+
+
+
+                
             }
         }
         }
