@@ -166,24 +166,43 @@ Spring Boot is an optional future enhancement.
 
 ### Deployment & Live Testing
 
-#### 12. Live Server Deployment
-- [ ] **Target server**: Oracle Cloud Free Tier (always-free ARM VM — 4 OCPUs, 24 GB RAM)
-  - Alternative: Fly.io free tier (Docker-native, great CLI)
-- [ ] Provision steps:
-  - [ ] Install Docker on VPS (`apt-get install docker.io`)
-  - [ ] Run PostgreSQL container (`postgres:16`)
-  - [ ] Run MongoDB container (`mongo:7`)
-  - [ ] Pull and run ETL image from `ghcr.io`
-- [ ] Live latency benchmark:
-  - [ ] Seed MongoDB with 10K, 100K, 500K documents
-  - [ ] Record: `read_ms`, `transform_ms`, `write_ms` per run
-  - [ ] Compare row-by-row vs batch insert throughput
-  - [ ] Log results to `benchmark-report.json`
-- [ ] Production best practices:
-  - [ ] Secrets via environment variables (never in image)
-  - [ ] Drop non-essential Postgres indexes before migration, rebuild after
-  - [ ] `reWriteBatchedInserts=true` in JDBC URL for Postgres
-  - [ ] Set `ulimits` on Docker containers for file descriptors
+#### 12. Live Server Options
+
+##### Free Servers (recommended to start)
+
+| Server | Specs | Best for |
+|---|---|---|
+| **Oracle Cloud Free Tier** | ARM VM, 4 OCPUs, 24 GB RAM — always free | Load testing with 100K+ docs, run all 3 services on one box |
+| **Railway.app** | $5/month free credit, one-click Postgres + MongoDB plugin | Fastest setup (~20 min), good for pipeline validation |
+| **Fly.io** | 3 shared VMs free, Docker-native, great CLI | `fly deploy` from repo, closest to real cloud workflow |
+
+> **Recommended path:** Start with **Railway** to validate the pipeline end-to-end in 20 minutes.  
+> Move to **Oracle Cloud Free Tier** for real load testing — it's the only free option with enough RAM to run MongoDB + Postgres + ETL simultaneously.
+
+##### Cheap Paid Servers (~$4–6/month)
+
+| Server | Cost | Best for |
+|---|---|---|
+| **Hetzner Cloud** (CX11) | €3.29/month | Low latency from Egypt, fast SSDs, full Ubuntu VPS |
+| **DigitalOcean** (Basic Droplet) | $4/month | Great docs, large community, easy Docker setup |
+
+##### Deployment Steps (any VPS with Docker)
+- [ ] Install Docker on VPS (`apt-get install docker.io`)
+- [ ] Run PostgreSQL container (`postgres:16`)
+- [ ] Run MongoDB container (`mongo:7`)
+- [ ] Pull and run ETL image from `ghcr.io`
+
+##### Live Latency Benchmark
+- [ ] Seed MongoDB with 10K, 100K, 500K documents
+- [ ] Record: `read_ms`, `transform_ms`, `write_ms` per run
+- [ ] Compare row-by-row vs batch insert throughput
+- [ ] Log results to `benchmark-report.json`
+
+##### Production Best Practices
+- [ ] Secrets via environment variables (never in image)
+- [ ] Drop non-essential Postgres indexes before migration, rebuild after
+- [ ] `reWriteBatchedInserts=true` in JDBC URL for Postgres
+- [ ] Set `ulimits` on Docker containers for file descriptors
 
 ---
 
