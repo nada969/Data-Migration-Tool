@@ -1,11 +1,10 @@
-package org.example.db;
+package org.example.connector;
 
 
 import com.mongodb.client.*;
 import org.bson.Document;
 
 import java.util.HashMap;
-import java.util.Map;
 
 
 public class MongoDB {
@@ -56,10 +55,10 @@ public class MongoDB {
 
 
 
-    public static void main( String[] args ){
-        MongoDB mongo = new MongoDB();
-        mongo.connect();
-        mongo.exportCollection();
-    }
+//    public static void main( String[] args ){
+//        MongoDB mongo = new MongoDB();
+//        mongo.connect();
+//        mongo.exportCollection();
+//    }
 }
 
