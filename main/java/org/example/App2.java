@@ -1,5 +1,5 @@
 package org.example;
-
+import org.bson.types.ObjectId;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
@@ -43,11 +43,24 @@ public class App2 {
         String url = readJSON.getUrlDestination();
         String user = readJSON.getDestination();
         String password = readJSON.getDestinationPassWord();
+        //                 PostgreSQL
+        //                      ▲
+        //                      │
+        //             JDBC Connection
+        //                      ▲
+        //                psql.conn
+        //                      ▲
+        //                      │
+        //        DSLContext (jOOQ)
+        //                      ▲
+        //                      │
+        //       insert / update / select
         psql.connect(url, user, password);
+        DSLContext create = DSL.using(psql.conn, SQLDialect.POSTGRES);
 
 
         String sql1;
-        String sql2;
+        String sql2 ="";
         String sql3;
 
         String table_name = readJSON.getTableName();
@@ -58,6 +71,7 @@ public class App2 {
                 " (id SERIAL PRIMARY KEY)";
         Statement stmt1 = psql.conn.createStatement();
         stmt1.executeUpdate(sql1);
+
 
 //      4- Columns
 //      check if each column exists in that table
@@ -71,6 +85,7 @@ public class App2 {
             }
         }
 
+
 //      5- Values
 //      first: loop all over the docs in the collection
 //      sec: loop to insert all values of this doc, in the columns that defined above
@@ -82,11 +97,8 @@ public class App2 {
 //             ├── Document #2
 //             │     ├── mapping loop
 //             │     └── INSERT row  --> insert each value alone
-        DSLContext create = DSL.using(
-                readJSON.getUrlDestination(),
-                "postgres",
-                readJSON.getDestinationPassWord()
-        );
+        System.out.println("start Inserting data...");
+
         for (Document document : collection.find()) {
 //            for (ReadJSON.Mapping map : readJSON.getMappings()) {
 //                //          Array value: --> table with one col & n.th rows
@@ -104,19 +116,38 @@ public class App2 {
 //                            .set(map.psqlCol().toString(),value)
 //                            .execute();
 //                }
+
             var insert = create.insertInto(DSL.table(table_name));
+
             InsertSetMoreStep<Record> step = null;
+
             for (ReadJSON.Mapping map : readJSON.getMappings()) {
                 Object value = document.get(map.mongoKey());
+
+                if (value instanceof ObjectId objectId) {
+                    value = objectId.toHexString();
+                }
+
                 step = (step == null)
                         ? insert.set(DSL.field(map.psqlCol()), value)
                         : step.set(DSL.field(map.psqlCol()), value);
+                System.out.printf("key: ");
+                System.out.println(map.mongoKey());
+                System.out.printf("value: ");
+                System.out.println(value);
+                System.out.printf("class: ");
+                System.out.println(value.getClass());
+                System.out.println("---------------");
             }
+            System.out.println("step 4");
+
             if (step != null) step.execute();
+            System.out.println("step 5");
 
 
         }
 
+        System.out.println("Inserting data...");
 
         /// / Close Connections:
         mongo.close();

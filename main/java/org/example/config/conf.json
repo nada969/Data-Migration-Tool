@@ -19,8 +19,8 @@
       "type":"VARCHAR"
     },
     {
-      "mongoKey":"pricepp",
-      "psqlCol":"pricepp",
+      "mongoKey":"inventory",
+      "psqlCol":"inventory",
       "type":"INTEGER"
     }
   ]
