@@ -19,7 +19,12 @@
       "type":"VARCHAR"
     },
     {
-      "mongoKey":"pricepp",
+      "mongoKey":"inventory",
+      "psqlCol":"inventory",
+      "type":"INTEGER"
+    },
+    {
+      "mongoKey":"price",
       "psqlCol":"pricepp",
       "type":"INTEGER"
     }
