@@ -17,6 +17,9 @@ import org.jooq.*;
 import org.jooq.Record;
 import org.jooq.impl.*;
 
+
+/// the goal: read config → connect → for each document: walk it, write the result → close connections
+///
 public class App2 {
     public static void main(String[] args) throws IOException, SQLException {
 //        1- Configure JSON File
@@ -61,7 +64,6 @@ public class App2 {
 
         String sql1;
         String sql2 ="";
-        String sql3;
 
         String table_name = readJSON.getTableName();
 
