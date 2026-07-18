@@ -1,6 +1,7 @@
-package org.example.config;
+package java.org.example.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.example.config.ReadJSON;
 import org.junit.jupiter.api.Test;
 import java.io.File;
 import static org.junit.jupiter.api.Assertions.*;
