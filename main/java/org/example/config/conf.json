@@ -11,22 +11,38 @@
     {
       "mongoKey":"_id",
       "psqlCol":"_id",
-      "type":"VARCHAR"
+      "type":"VARCHAR",
+      "shape": "SINGLE"
     },
     {
       "mongoKey":"name",
-      "psqlCol":" name ",
-      "type":"VARCHAR"
+      "psqlCol":"name",
+      "type":"VARCHAR",
+      "shape": "SINGLE"
     },
     {
       "mongoKey":"inventory",
       "psqlCol":"inventory",
-      "type":"INTEGER"
+      "type":"INTEGER",
+      "shape": "SINGLE"
     },
     {
       "mongoKey":"price",
       "psqlCol":"pricepp",
-      "type":"INTEGER"
+      "type":"INTEGER",
+      "shape": "SINGLE"
+    },
+    {
+      "mongoKey": "protectedParameters",
+      "psqlCol": "protected_parameters",
+      "type": "JSONB",
+      "shape": "ARRAY"
+    },
+    {
+      "mongoKey": "analyticsStatusTimeline",
+      "psqlCol": "analytics_status_timeline",
+      "type": "JSONB",
+      "shape": "OBJECT"
     }
   ]
 }
