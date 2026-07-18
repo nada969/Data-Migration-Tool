@@ -28,15 +28,25 @@ public class SchemaWalker {
         Map<String, Object> parentRow = new LinkedHashMap<>();
         for (ReadJSON.Mapping map : mappings) {
             Object value = document.get(map.mongoKey());
-
+            if (value == null) {
+                parentRow.put(map.psqlCol(), null);  // explicit null → SQL NULL
+                continue;                             // skip type conversion + shape switch
+            }
             if (value instanceof ObjectId objectId) {
                 value = objectId.toHexString();
             }
+            switch (map.shape()) {
+                // extract scalar value → parent column
+                case SINGLE ->
+                        parentRow.put(map.psqlCol(), value);
 
-//            step = (step == null)
-//                    ? insert.set(DSL.field(map.psqlCol()), value)
-//                    : step.set(DSL.field(map.psqlCol()), value);
-            parentRow.put(map.psqlCol(), value);
+//                case OBJECT -> // flatten nested document → prefixed parent columns
+//                        parentRow.put(map.psqlCol(), value);
+//
+//                case ARRAY  -> // produce child-table rows
+//                        parentRow.put(map.psqlCol(), value);
+
+            }
 
             System.out.printf("key: ");
             System.out.println(map.mongoKey());
